@@ -1,0 +1,26 @@
+document.getElementById('summarizeBtn').addEventListener('click', () => {
+    const inputText = document.getElementById('inputText').value;
+    const summary = summarizeText(inputText);
+    document.getElementById('summaryOutput').innerText = summary;
+});
+
+function summarizeText(text) {
+    if (!text) return 'Please enter a paragraph to summarize.';
+
+    const sentences = text.split('. ').filter(sentence => sentence.length > 0);
+
+    // Calculate the importance of each sentence (a simple heuristic: longer sentences are more important)
+    const scoredSentences = sentences.map(sentence => ({
+        text: sentence,
+        score: sentence.split(' ').length // using word count as a simple score
+    }));
+
+    // Sort sentences by score in descending order
+    scoredSentences.sort((a, b) => b.score - a.score);
+
+    // Select the top 2-3 sentences for the summary
+    const summaryLength = Math.min(2, scoredSentences.length);
+    const summary = scoredSentences.slice(0, summaryLength).map(s => s.text).join('. ');
+
+    return summary + (summary.endsWith('.') ? '' : '.');
+}
